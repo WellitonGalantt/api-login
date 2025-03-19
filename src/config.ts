@@ -1,0 +1,1 @@
+// config.ts → Gerenciar variáveis de ambiente.
