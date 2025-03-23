@@ -2,7 +2,7 @@
 
 Este projeto é uma API simples de autenticação e gerenciamento de usuários, desenvolvida para fins de estudo.
 
-## 🎖️Objetivo:
+## 🎖️ Objetivo:
 - Estudar o funcionamento de um login.
 - Estudar o funcionamento de um banco de dados.
 - Estudar sobre autennticação.
