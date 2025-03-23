@@ -1,5 +1,6 @@
 import { IUser } from "../shared/interfaces";
 import { Knex } from '../database/knex';
+import { EncriptionProvider } from "./EncriptionProvider";
 
 // Arquivos onde ficarao os CRUDS do projeto.
 
@@ -21,7 +22,9 @@ export class AuthProvider {
             return Error('Email incorreto, usuário não encontrado.');
         }
 
-        if( existingUser.password !== user.password) {
+        const comparePassword = await EncriptionProvider.comparePassword(user.password, existingUser.password)
+
+        if( !comparePassword ) {
             return Error('Senha incorreta.');
         }
 
@@ -32,9 +35,12 @@ export class AuthProvider {
     static async registerUser(user: IUser): Promise<number | Error> {
         console.log('registerUser:');
         console.log(user);
+
+        const hashedPassword = await EncriptionProvider.encryptPassword(user.password);
+        user.password = hashedPassword;
         try {
         
-            // Verifica se o e-mail já existe
+            // Verifica se o e-mail já existe, se ja existir ele rotorna os dados do usuario.
             const existingUser = await Knex('users').where('email', user.email).first();
 
             console.log('Provider')
