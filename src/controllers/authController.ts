@@ -8,16 +8,16 @@ import { gerarToken } from '../utils/authVerifyJwt';
 export class AuthController {
 
   static async getUser(req: AuthRequest, res: Response) {
-    try{
+    try {
       const userId = req.user?.id;
-      if(!userId) {
+      if (!userId) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           message: 'ID do usuário não encontrado!',
         })
       }
       const user = await AuthProvider.getUser(userId);
 
-      if(user instanceof Error){
+      if (user instanceof Error) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           message: 'Erro ao buscar usuario no banco de dados!',
           error: user.message,
@@ -29,7 +29,7 @@ export class AuthController {
         data: user,
       })
     }
-    catch(error){
+    catch (error) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message: 'Erro ao buscar usuario!',
         error: error,
@@ -42,7 +42,7 @@ export class AuthController {
     console.log(req.body);
 
     const result = await AuthProvider.loginUser(req.body)
-    if(result instanceof Error){
+    if (result instanceof Error) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message: 'Erro ao tentar se logar!',
         error: result.message,

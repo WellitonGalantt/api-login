@@ -11,15 +11,15 @@ export const validateSchema = (schema: yup.ObjectSchema<IUser | Omit<IUser, 'nam
     return async (req: Request, res: Response, next: NextFunction) => {
 
         await schema.validate(req.body, { abortEarly: false })
-        .then(() => next())
-        .catch((error) => {
-            const yupError = error as yup.ValidationError;
-            console.log(yupError.errors);
-            return res.status(StatusCodes.BAD_REQUEST).json({
-                message: 'Acho que deu algo de errado na digitção dos dados...',
-                errors: yupError.errors,
+            .then(() => next())
+            .catch((error) => {
+                const yupError = error as yup.ValidationError;
+                console.log(yupError.errors);
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    message: 'Acho que deu algo de errado na digitção dos dados...',
+                    errors: yupError.errors,
+                })
             })
-        })        
     }
 }
 
@@ -31,16 +31,16 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     console.log('Middlewaare');
     console.log(token);
 
-    if(!token) {
+    if (!token) {
         res.status(StatusCodes.UNAUTHORIZED).json({
             message: 'Token não fornecido!',
         })
         return;
     }
-    else{
-        try{
+    else {
+        try {
             const decodedToken = verificarToken(token);
-            if(!decodedToken){
+            if (!decodedToken) {
                 res.status(401).json({ error: "Token inválido ou expirado." })
                 return;
             }
@@ -48,7 +48,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
             req.user = decodedToken as { id: number; role: string };
             next();
         }
-        catch(error){
+        catch (error) {
             res.status(401).json({ error: "Token inválido ou expirado." })
             return;
         }

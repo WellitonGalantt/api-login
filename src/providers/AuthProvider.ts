@@ -7,7 +7,7 @@ import { EncriptionProvider } from "./EncriptionProvider";
 export class AuthProvider {
 
     static async getUser(id: number): Promise<IUser | Error> {
-        
+
         const user = await Knex('users').where('id', id).first();
         if (!user) {
             return Error('Usuário não encontrado.');
@@ -24,7 +24,7 @@ export class AuthProvider {
 
         const comparePassword = await EncriptionProvider.comparePassword(user.password, existingUser.password)
 
-        if( !comparePassword ) {
+        if (!comparePassword) {
             return Error('Senha incorreta.');
         }
 
@@ -39,7 +39,7 @@ export class AuthProvider {
         const hashedPassword = await EncriptionProvider.encryptPassword(user.password);
         user.password = hashedPassword;
         try {
-        
+
             // Verifica se o e-mail já existe, se ja existir ele rotorna os dados do usuario.
             const existingUser = await Knex('users').where('email', user.email).first();
 
@@ -48,8 +48,8 @@ export class AuthProvider {
             if (existingUser) {
                 return Error('O e-mail já está registrado.');
             }
-            
-            const [ idUser ] = await Knex('users').insert(user).returning('id');
+
+            const [idUser] = await Knex('users').insert(user).returning('id');
             console.log('Sucesso ao criar um usuario!');
             return idUser;
         }

@@ -15,21 +15,21 @@ export async function up(knex: Knex): Promise<void> {
         table.string('email').index().notNullable().unique();
         table.string('password').notNullable();
     })
-    .then(() => {
+        .then(() => {
             console.log(`# Created table ${ETablesNames.USERS}`);
         })
-    .catch((err) => {
-        console.error('Erro ao criar a tabela:', err);
+        .catch((err) => {
+            console.error('Erro ao criar a tabela:', err);
         });
 }
 
 export async function down(knex: Knex): Promise<void> {
     return knex.schema.dropTable(ETablesNames.USERS)
-    .then(() => {
+        .then(() => {
             console.log(`# Dropped table ${ETablesNames.USERS}`);
         })
-    .catch((err) => {
-        console.error('Erro ao deletar a tabela:', err);
+        .catch((err) => {
+            console.error('Erro ao deletar a tabela:', err);
         });
 }
 
