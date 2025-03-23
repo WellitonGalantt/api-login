@@ -1,12 +1,43 @@
 // controllers/authController.ts → Lógica de autenticação.
 import { Request, Response } from 'express';
-import { IUser } from '../shared/interfaces';
+import { AuthRequest, IUser } from '../shared/interfaces';
 import { StatusCodes } from 'http-status-codes';
 import { AuthProvider } from '../providers/AuthProvider';
+import { gerarToken } from '../utils/authVerifyJwt';
 
 export class AuthController {
 
-  static async loginUser(req: Request<{}, {}, IUser>, res: Response) {
+  static async getUser(req: AuthRequest, res: Response) {
+    try{
+      const userId = req.user?.id;
+      if(!userId) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: 'ID do usuário não encontrado!',
+        })
+      }
+      const user = await AuthProvider.getUser(userId);
+
+      if(user instanceof Error){
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: 'Erro ao buscar usuario no banco de dados!',
+          error: user.message,
+        })
+      }
+
+      return res.status(StatusCodes.OK).json({
+        message: 'Usuário encontrado com sucesso!',
+        data: user,
+      })
+    }
+    catch(error){
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: 'Erro ao buscar usuario!',
+        error: error,
+      })
+    }
+  }
+
+  static async loginUser(req: Request<{}, {}, IUser>, res: Response): Promise<Response> {
     console.log('Controller:');
     console.log(req.body);
 
@@ -18,9 +49,15 @@ export class AuthController {
       })
     }
 
+    const token = gerarToken(result, 'user');
+
+    res.setHeader("Authorization", `Bearer ${token}`);
+    console.log("Headers recebidos:", req.headers);
+
     return res.status(StatusCodes.OK).json({
       message: 'Login realizado com sucesso!',
       id: result,
+      token: token,
     })
   }
 

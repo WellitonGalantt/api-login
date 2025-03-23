@@ -5,11 +5,20 @@ import { Knex } from '../database/knex';
 
 export class AuthProvider {
 
+    static async getUser(id: number): Promise<IUser | Error> {
+        
+        const user = await Knex('users').where('id', id).first();
+        if (!user) {
+            return Error('Usuário não encontrado.');
+        }
+        return user;
+    }
+
     static async loginUser(user: Omit<IUser, 'name'>): Promise<number | Error> {
 
         const existingUser = await Knex('users').where('email', user.email).first();
         if (!existingUser) {
-            return Error('Usuário não encontrado.');
+            return Error('Email incorreto, usuário não encontrado.');
         }
 
         if( existingUser.password !== user.password) {
